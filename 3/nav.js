@@ -9,10 +9,13 @@ var navTable = {
 var currentVisibleContainer = 'userListContainer';
 
 function init() {
-    document.getElementById('userDetailsContainer').style.display = 'none';
-    document.getElementById('userListContainer').style.display = 'none';
-    document.getElementById('navErrorContainer').style.display = 'none';
-    onHashChange();
+    ex3Ready.then(function () {
+        document.getElementById('userDetailsContainer').style.display = 'none';
+        document.getElementById('userListContainer').style.display = 'none';
+        document.getElementById('navErrorContainer').style.display = 'none';
+        onHashChange();
+        
+    });
 
 }
 function onHashChange() {

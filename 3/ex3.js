@@ -2,8 +2,8 @@ var nextId = 1000;
 var users = {};
 var posts = {};
 console.log('Loaded!');
-loadUsers();
-loadPosts();
+var ex3Ready = Promise.all([loadPosts(), loadUsers()]).then(buildList).then(firePostsLoaded());
+// loadPosts();
 window.addEventListener('hashchange', function () {
     console.log('hash change: ', location.hash);
 
@@ -16,8 +16,7 @@ function reset() {
         list.removeChild(list.firstChild);
     }
     users = {};
-    loadUsers();
-    loadPosts();
+    ex3Ready = Promise.all([loadPosts(), loadUsers()]).then(buildList).then(firePostsLoaded());
     updateUserCount();
 }
 
@@ -65,36 +64,50 @@ function createListItem(user) {
 }
 
 function loadUsers() {
-    var r = new XMLHttpRequest();
-    r.open('GET', 'http://jsonplaceholder.typicode.com/users', true);
-    r.onreadystatechange = function () {
-        if (r.readyState != 4 || r.status != 200) return;
-        var list = JSON.parse(r.response);
-        for (i = 0; i < list.length; i++) {
-            var u = list[i];
-            users[u.id] = u;
-            document.getElementById('userList').appendChild(createListItem(u));
-        }
-        updateUserCount();
-    };
-    r.send();
-}
+    return new Promise(function (resolve, reject) {
+        var r = new XMLHttpRequest();
+        r.open('GET', 'http://jsonplaceholder.typicode.com/users', true);
+        r.onreadystatechange = function () {
+            if (r.readyState != 4 || r.status != 200) return;
+            var list = JSON.parse(r.response);
+            for (i = 0; i < list.length; i++) {
+                var u = list[i];
+                users[u.id] = u;
+            }
+            updateUserCount();
+            resolve(users);
+        };
+        r.send();
 
+    });
+}
+function buildList() {
+    Object.keys(users).forEach(function (k) {
+        document.getElementById('userList').appendChild(createListItem(users[k]));
+
+    }, this);
+}
 function loadPosts() {
-    var r = new XMLHttpRequest();
-    r.open('GET', 'http://jsonplaceholder.typicode.com/posts', true);
-    r.onreadystatechange = function () {
-        if (r.readyState != 4 || r.status != 200) return;
-        var list = JSON.parse(r.response);
-        for (i = 0; i < list.length; i++) {
-            var u = list[i];
-            posts[u.id] = u;
-        }
-        var event = document.createEvent('Event');
-        event.initEvent('postsLoaded', true, false);
-        window.dispatchEvent(event);
-    };
-    r.send();
+    return new Promise(function (resolve, reject) {
+        var r = new XMLHttpRequest();
+        r.open('GET', 'http://jsonplaceholder.typicode.com/posts', true);
+        r.onreadystatechange = function () {
+            if (r.readyState != 4 || r.status != 200) return;
+            var list = JSON.parse(r.response);
+            for (i = 0; i < list.length; i++) {
+                var u = list[i];
+                posts[u.id] = u;
+            }
+            resolve(posts);
+
+        };
+        r.send();
+    });
+}
+function firePostsLoaded(params) {
+    var event = document.createEvent('Event');
+    event.initEvent('postsLoaded', true, false);
+    window.dispatchEvent(event);
 }
 
 function getPostsForUser(userId) {
