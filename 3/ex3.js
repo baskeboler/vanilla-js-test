@@ -2,12 +2,7 @@ var nextId = 1000;
 var users = {};
 var posts = {};
 console.log('Loaded!');
-var ex3Ready = Promise.all([loadPosts(), loadUsers()]).then(buildList).then(firePostsLoaded());
-// loadPosts();
-window.addEventListener('hashchange', function () {
-    console.log('hash change: ', location.hash);
-
-});
+var ex3Ready = Promise.all([loadPosts(), loadUsers()]).then(buildList);//.then(firePostsLoaded());
 
 function reset() {
     var list = document.getElementById('userList');
@@ -16,8 +11,8 @@ function reset() {
         list.removeChild(list.firstChild);
     }
     users = {};
-    ex3Ready = Promise.all([loadPosts(), loadUsers()]).then(buildList).then(firePostsLoaded());
-    updateUserCount();
+    ex3Ready = Promise.all([loadPosts(), loadUsers()]).then(buildList);//.then(firePostsLoaded());
+    // updateUserCount();
 }
 
 function addUser(name) {
@@ -103,11 +98,6 @@ function loadPosts() {
         };
         r.send();
     });
-}
-function firePostsLoaded(params) {
-    var event = document.createEvent('Event');
-    event.initEvent('postsLoaded', true, false);
-    window.dispatchEvent(event);
 }
 
 function getPostsForUser(userId) {

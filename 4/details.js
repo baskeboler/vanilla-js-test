@@ -1,32 +1,31 @@
-    // '#/userDetails': 'userDetailsContainer'
+// '#/userDetails': 'userDetailsContainer'
 
 navTable['#/userDetails'] = {
     view: 'userDetailsContainer',
     init: parseHash
 }
-details={
-    pending:[]
+details = {
 };
 
 
 function parseHash() {
-    ex3Ready.then(function () {
-        var prefix='#/userDetails/';
+    myApplicationReady.then(function () {
+        var prefix = '#/userDetails/';
         var h = location.hash;
-        var r=h.substr(prefix.length);
-        var userId=parseInt(r)
+        var r = h.substr(prefix.length);
+        var userId = parseInt(r)
         if (!isNaN(userId)) {
             showUserDetails(userId)
-        }    
-        
+        }
+
     });
 }
 
 function showUserDetails(id) {
-    document.getElementById('user-details-name').textContent = users[id].name + ' (' + users[id].username + ')';
+    document.getElementById('user-details-name').textContent = users.get(id).name + ' (' + users.get(id).username + ')';
     var posts = getPostsForUser(id);
     var list = document.getElementById('user-details-posts');
-    while(list.firstChild) {
+    while (list.firstChild) {
         list.removeChild(list.firstChild);
     }
     for (var i = 0; i < posts.length; i++) {
@@ -35,6 +34,5 @@ function showUserDetails(id) {
         li.textContent = '' + post.id + ' - ' + post.title;
         list.appendChild(li);
     }
-    location.hash='#/userDetails/'+id;
-    // location.search={id:id};
+    location.hash = '#/userDetails/' + id;
 }
