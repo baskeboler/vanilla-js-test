@@ -1,44 +1,48 @@
 var nextId = 1000;
 var users = new ObservableMap();
-setupUserCount();
 var posts = new ObservableMap();
-console.log('Loaded!');
 var myApplicationReady;
-if (sessionStorage.users && sessionStorage.posts) {
-    console.log('loading from sessionStorage');
-    usersObj = JSON.parse(sessionStorage.users);
-    for (var key in usersObj) {
-        if (usersObj.hasOwnProperty(key)) {
-            var u = usersObj[key];
-            users.set(key, u);
-        }
-    }
-    postsObj = JSON.parse(sessionStorage.posts);
-    for (var key in postsObj) {
-        if (postsObj.hasOwnProperty(key)) {
-            var p = postsObj[key];
-            posts.set(key, p);
-        }
-    }
-    myApplicationReady = Promise.resolve();
-    buildList();
-    // updateUserCount();
-} else {
 
-    myApplicationReady = Promise.all([loadPosts(), loadUsers()]).then(buildList);//.then(firePostsLoaded());
-}
 var userPersistence = new Observer();
-userPersistence.update = function (subj) {
-    console.log('saving users');
-    sessionStorage.users = JSON.stringify(subj.map);
-}
-users.addObserver(userPersistence);
 var postsPersistence = new Observer();
-postsPersistence.update = function (subj) {
-    console.log('saving posts');
-    sessionStorage.posts = JSON.stringify(subj.map);
+
+initialize();
+
+function initialize() {
+    setupUserCount();
+    if (sessionStorage.users && sessionStorage.posts) {
+        console.log('loading from sessionStorage');
+        usersObj = JSON.parse(sessionStorage.users);
+        for (var key in usersObj) {
+            if (usersObj.hasOwnProperty(key)) {
+                var u = usersObj[key];
+                users.set(key, u);
+            }
+        }
+        postsObj = JSON.parse(sessionStorage.posts);
+        for (var key in postsObj) {
+            if (postsObj.hasOwnProperty(key)) {
+                var p = postsObj[key];
+                posts.set(key, p);
+            }
+        }
+        myApplicationReady = Promise.resolve();
+        buildList();
+    } else {
+        myApplicationReady = Promise.all([loadPosts(), loadUsers()]).then(buildList);//.then(firePostsLoaded());
+    }
+    userPersistence.update = function (subj) {
+        console.log('saving users');
+        sessionStorage.users = JSON.stringify(subj.map);
+    }
+    users.addObserver(userPersistence);
+    postsPersistence.update = function (subj) {
+        console.log('saving posts');
+        sessionStorage.posts = JSON.stringify(subj.map);
+    }
+    posts.addObserver(postsPersistence);
+
 }
-posts.addObserver(postsPersistence);
 
 function reset() {
     var list = document.getElementById('userList');
@@ -59,7 +63,7 @@ function addUser(name) {
         posts: [],
         username: name.split(' ').join('')
     };
-    users.set(user.id,  user);
+    users.set(user.id, user);
     console.log('user name: ', name);
     var list = document.getElementById('userList');
     list.appendChild(createListItem(user));
@@ -67,7 +71,7 @@ function addUser(name) {
 function setupUserCount() {
     var o = document.getElementById('userCount');
     o.update = function (list) {
-     this.textContent = list.keys().length;   
+        this.textContent = list.keys().length;
     };
     users.addObserver(o);
 }
