@@ -7,7 +7,8 @@
 * `XMLHttpRequest` used for AJAX requests.
 
 ## 3
-
+* Routing and navigation
+* "application ready" promise used so views are built after all data has been fetched.
 ## 4
 
 ### ObservableMaps
