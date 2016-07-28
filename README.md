@@ -38,7 +38,8 @@ Maps that extend Subject and notify observers when modified.
   * use ui-router for routing and navigation
   * use 2-way binding in views for user list and user count.
   * use angular factory and $resource 
-     * `angular.module(app).factory('User', User);
+     * ```javascript
+     angular.module(app).factory('User', User);
     User.$inject = ['$resource'];
     function User($resource) {
       var service = $resource('http://someurl.com/users/:id', {}, {
@@ -53,5 +54,5 @@ Maps that extend Subject and notify observers when modified.
         });
         return service;
     }
-    `
+    ```
     * this is assuming backend service implements these HTTP methods.
